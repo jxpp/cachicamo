@@ -3,8 +3,10 @@
 void init(void) {
   graphics_init();
   input_init();
+  entity_init();
   sprite_init();
   position_init();
+  collision_init();
   mainGame.time = 0;
   logging_log(DEBUG, "cachicamo", "inited succesfully");
 }

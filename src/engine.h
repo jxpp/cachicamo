@@ -10,12 +10,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "collision.h"
 #include "globals.h"
 #include "input.h"
 #include "graphics.h"
 #include "logging.h"
 #include "sprite.h"
-#include "position_component.h"
+#include "position_c.h"
 
 /*
  * TODO:

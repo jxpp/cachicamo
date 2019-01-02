@@ -1,4 +1,4 @@
-#include "position_component.h"
+#include "position_c.h"
 
 static void _position_cleanup(void) {
   for (int i = 0; i < MAX_ENTITIES; i++) {

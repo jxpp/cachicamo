@@ -10,14 +10,17 @@ Entity _entity_register(uint64_t id) {
   return id;
 }
 
-Entity entity_registerAnon(void) {
+Entity entity_new(void) {
   return _entity_register(entityIdCounter++);
 }
 
-Entity entity_registerNamed(const char* name) {
-  uint64_t hash = _djb2_hash(name);
-  setHashTable(&entity_namedMap, hash, entityIdCounter++);
-  return _entity_register(_djb2_hash(name));
+Entity entity_newNamed(const char* name) {
+  setHashTable(&entity_namedMap, _djb2_hash(name), entityIdCounter);
+  return _entity_register(entityIdCounter++);
+}
+
+Entity entity_getNamed(const char* name) {
+  return (Entity) getHashTable(&entity_namedMap, _djb2_hash(name));
 }
 
 uint64_t _djb2_hash(const char* str) {

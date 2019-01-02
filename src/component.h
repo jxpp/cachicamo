@@ -8,7 +8,7 @@
 
 #include "entity.h"
 #include "sprite.h"
-#include "position_component.h"
+#include "position_c.h"
 #include "input.h"
 
 enum component_type {POSITION, INPUT, SPRITE};

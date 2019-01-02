@@ -58,6 +58,10 @@ void graphics3D_end(void) {
   GPU_PopMatrix();
 }
 
+void graphics_processDrawQueue(void) {
+
+}
+
 void graphics_drawToScreen(GPU_Image* sprite, GPU_Rect* rect, float x, float y) {
   GPU_Blit(sprite, rect, graphics.screen, x, y);
 }

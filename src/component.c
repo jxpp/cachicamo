@@ -1,9 +1,7 @@
 #include "component.h"
 
 void component_register(enum component_type ctype, ...) {
-
   va_list argPointer;
-
   va_start(argPointer, ctype);
   Entity entity;
   float x, y;

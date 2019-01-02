@@ -16,10 +16,10 @@ HashTable entity_namedMap;
 
 void entity_init(void);
 
-Entity _entity_register(uint64_t);
+Entity entity_new();
+Entity entity_newNamed(const char*);
 
-Entity entity_registerAnon();
-Entity entity_registerNamed(const char*);
+Entity entity_getNamed(const char*);
 
 uint64_t _djb2_hash(const char*);
 
