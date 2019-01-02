@@ -1,7 +1,7 @@
 #include "position_component.h"
 
 static void _position_cleanup(void) {
-  for (int i = MAX_ENTITIES; i != 0; --i) {
+  for (int i = 0; i < MAX_ENTITIES; i++) {
     if(position_map[i] != NULL) {
       free(position_map[i]);
     }
@@ -11,7 +11,7 @@ static void _position_cleanup(void) {
 
 void position_init(void) {
   position_map = malloc(sizeof(struct _position_t) * MAX_ENTITIES);
-  for (int i = MAX_ENTITIES; i != 0; --i) {
+  for (int i = 0; i < MAX_ENTITIES; i++) {
     position_map[i] = NULL;
   }
   atexit(_position_cleanup);

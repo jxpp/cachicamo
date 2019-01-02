@@ -1,7 +1,7 @@
 #include "sprite.h"
 
 static void _sprite_cleanup(void) {
-  for (Entity i = MAX_ENTITIES; i != 0; i--) {
+  for (Entity i = 0; i < MAX_ENTITIES; i++) {
     if (sprite_map[i] != NULL) {
       free(sprite_map[i]);
       sprite_map[i] = NULL;
@@ -12,7 +12,7 @@ static void _sprite_cleanup(void) {
 
 void sprite_init(void) {
   sprite_map = malloc(sizeof(Sprite*) * MAX_ENTITIES);
-  for (Entity i = MAX_ENTITIES; i != 0; i--) {
+  for (Entity i = 0; i < MAX_ENTITIES; i++) {
     sprite_map[i] = NULL;
   }
   atexit(_sprite_cleanup);

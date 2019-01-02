@@ -23,7 +23,7 @@ void input_register(SDL_Scancode scancode, void (*action)(void*), void* args) {
 }
 
 void input_process(void) {
-  for (int i = N_SDL_KEYS; i != 0; --i) {
+  for(int i=0; i<N_SDL_KEYS; i++) {
     if(input.keys[i] && input.actions[i] != NULL) {
       input.actions[i](input.actionArgs[i]);
     }
