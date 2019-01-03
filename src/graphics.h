@@ -12,16 +12,21 @@
 
 #include "globals.h"
 
+#define DRAW_QUEUE_SIZE 256
+
 
 struct _graphics_t {
   GPU_Target* screen;
 };
 
-extern struct _graphics_t graphics;
+//extern struct _graphics_t graphics;
+
+GPU_Image** graphics_drawQueue;
 
 void graphics_init(void);
 
 void graphics_frameStart(void);
+void graphics_frameDraw(void);
 void graphics_frameEnd(void);
 
 void graphics3D_start(void);

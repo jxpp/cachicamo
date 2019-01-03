@@ -33,10 +33,12 @@ int sprite_loadImage(const char*);
 
 void sprite_init(void);
 
-void sprite_register(Entity, const char*);
+void sprite_register(Entity, const char*, float x, float y, float w, float h);
 void sprite_deregister(Entity);
 
-void spriteAnimated_register(Entity, const char*, size_t w, size_t h, ...);
+void sprite_markForDrawing(Entity);
+
+void spriteAnimated_register(Entity, const char*, GPU_Rect*);
 
 void sprite_draw(Entity);
 

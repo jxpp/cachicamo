@@ -8,46 +8,58 @@
 #include "collision.h"
 #include "position_c.h"
 
-#include "component.h"
+#include "behaviour.h"
+
+#define UNUSED __attribute__((unused))
+
+float ballSpeed = 2.0f;
+
+float ballDirectionX = 1.0f;
+float ballDirectionY = 1.0f;
 
 void moveUp(void* entity) {
   Entity e = *((Entity*) entity);
   Position* position = position_get(e);
-  position->y -= 2.1f;
+  position->y -= ballSpeed+0.1f;
 }
 
 void moveDown(void* entity) {
   Entity e = *((Entity*) entity);
   Position* position = position_get(e);
-  position->y += 2.1f;
+  position->y += ballSpeed+0.1f;
 }
 
-void probanding(void* arg) {
-  logging_log(DEBUG, "main", "WOW");
-}
-
-float ballSpeed = 2.0f;
-float ballDirectionX = 1.0f;
-float ballDirectionY = 1.0f;
-
-void bounceBallPaddle(void* arg) {
+void bounceBallPaddle(void* _ UNUSED ) {
   ballDirectionX *= -1;
-  ballSpeed *= 1.1f;
+  ballSpeed *= 1.05f;
 }
-void bounceBallWall(void* arg) {
+
+void bounceBallWall(void* _ UNUSED) {
   ballDirectionY *= -1;
 }
 
-void scorePointPlayer1(void* uselessArg) {
-  Position* pos = position_get(entity_getNamed("ball"));
-  pos->x = 400;
-  pos->y = 300;
+bool tru(void* _ UNUSED) {
+  return position_get(entity_getNamed("ball"))->x > 250;
 }
 
-void scorePointPlayer2(void* thisArgumentNeverActuallyGetsUtilizedButNeedsToExistSoTheFunctionSignatureMatches) {
+void rPaddleWalk(void* args UNUSED) {
+  Entity rPaddle = entity_getNamed("rightPaddle");
+  Entity ball = entity_getNamed("ball");
+  position_get(rPaddle)->y += position_get(ball)->y < position_get(rPaddle)->y ? -2.5f : 2.5f;
+}
+
+void scorePointPlayer1(void* _ UNUSED ) {
   Position* pos = position_get(entity_getNamed("ball"));
   pos->x = 400;
   pos->y = 300;
+  ballSpeed = 2.0f;
+}
+
+void scorePointPlayer2(void* _ UNUSED) {
+  Position* pos = position_get(entity_getNamed("ball"));
+  pos->x = 400;
+  pos->y = 300;
+  ballSpeed = 2.0f;
 }
 
 int main(void) {
@@ -56,23 +68,24 @@ int main(void) {
   sprite_loadImage("ball.png");
 
   Entity leftPaddle = entity_newNamed("leftPaddle");
-  component_register(POSITION, leftPaddle, 10.0, 10.0);
-  component_register(SPRITE, leftPaddle, "ball.png");
-  component_register(INPUT, SDL_SCANCODE_W, &moveUp, &leftPaddle);
-  component_register(INPUT, SDL_SCANCODE_S, &moveDown, &leftPaddle);
+  position_register(leftPaddle, 10.0, 10.0);
+  sprite_register(leftPaddle, "ball.png", 0, 0, 10, 50);
+  input_register(SDL_SCANCODE_W, &moveUp, &leftPaddle);
+  input_register(SDL_SCANCODE_S, &moveDown, &leftPaddle);
 
   Entity rightPaddle = entity_newNamed("rightPaddle");
-  component_register(POSITION, rightPaddle, 800-10.0, 600-10.0);
-  component_register(SPRITE, rightPaddle, "ball.png");
+  position_register(rightPaddle, 800-10.0, 600-10.0);
+  sprite_register(rightPaddle, "ball.png", 40, 40, 10, 50);
 
   Entity ball = entity_newNamed("ball");
-  component_register(POSITION, ball, 20.0, 20.0);
-  component_register(SPRITE, ball, "ball.png");
+  position_register(ball, 400.0, 300.0);
+  sprite_register(ball, "ball.png", 26, 48, 16, 16);
 
   CTagId bounceTag = collision_addNewTag("bounce", &bounceBallPaddle, NULL);
-  GPU_Rect box = {0.0f, 0.0f, 8.0f, 8.0f};
-  collision_register(bounceTag, &leftPaddle, box);
-  collision_register(bounceTag, &rightPaddle, box);
+  GPU_Rect paddleBox = {-5.0f, -25.0f, 10.0f, 50.0f};
+  collision_register(bounceTag, &leftPaddle, paddleBox);
+  collision_register(bounceTag, &rightPaddle, paddleBox);
+  GPU_Rect box = {-8.0f, -8.0f, 16.0f, 16.0f};
   collision_register(bounceTag, &ball, box);
 
   CTagId bounceWallTag = collision_addNewTag("wall", &bounceBallWall, NULL);
@@ -83,14 +96,17 @@ int main(void) {
   collision_register(bounceWallTag, NULL, lowerWall);
 
   CTagId player1PointTag = collision_addNewTag("player1Point", &scorePointPlayer1, NULL);
-  GPU_Rect rightWall = {820.0f, 0.0f, 5.0f, 600.0f};
+  GPU_Rect rightWall = {600.0f, -10.0f, 5.0f, 620.0f};
   collision_register(player1PointTag, &ball, rightWall);
   collision_register(player1PointTag, NULL, rightWall);
 
   CTagId player2PointTag = collision_addNewTag("player2Point", &scorePointPlayer2, NULL);
-  GPU_Rect leftWall = {-20.0f, 0.0f, 5.0f, 600.0f};
+  GPU_Rect leftWall = {-10.0f, 0.0f, 5.0f, 600.0f};
   collision_register(player2PointTag, &ball, leftWall);
   collision_register(player2PointTag, NULL, leftWall);
+
+  behaviour_init();
+  behaviour_register(&tru, NULL, &rPaddleWalk, NULL);
 
   bool open = true;
 
@@ -106,8 +122,9 @@ int main(void) {
     bPos->x += ballSpeed * ballDirectionX;
     bPos->y += ballSpeed * ballDirectionY;
 
-    Position* rPos = position_get(rightPaddle);
-    rPos->y += bPos->y < rPos->y ? -(ballSpeed - 0.01) : (ballSpeed - 0.01);
+    //Position* rPos = position_get(rightPaddle);
+    //rPos->y += bPos->y < rPos->y ? -(ballSpeed * 0.9) : (ballSpeed * 0.9);
+    behaviour_process();
     // -----------------------------------------
     collision_process();
     graphics3D_start();

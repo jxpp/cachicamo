@@ -58,14 +58,14 @@ int sprite_loadImage(const char* path) {
   return i;
 }
 
-void sprite_register(Entity entity, const char* path) {
+void sprite_register(Entity entity, const char* path, float x, float y, float w, float h) {
   Sprite* sprite = malloc(sizeof(Sprite));
 
   GPU_Rect* rect = malloc(sizeof(GPU_Rect));
-  rect->x = 0;
-  rect->y = 0;
-  rect->w = 10;
-  rect->h = 10;
+  rect->x = x;
+  rect->y = y;
+  rect->w = w;
+  rect->h = h;
   sprite->rect = rect;
 
   sprite->nFrames = 1;
