@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-struct _graphics_t graphics = {
+static struct _graphics_t graphics = {
 	.screen = NULL
 };
 

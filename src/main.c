@@ -39,7 +39,11 @@ void bounceBallWall(void* _ UNUSED) {
 }
 
 bool tru(void* _ UNUSED) {
-  return position_get(entity_getNamed("ball"))->x > 250;
+  static Position* ballPos = NULL;
+  if (ballPos == NULL) {
+    ballPos = position_get(entity_getNamed("ball"));
+  }
+  return ballPos->x > 250;
 }
 
 void rPaddleWalk(void* args UNUSED) {
@@ -60,6 +64,16 @@ void scorePointPlayer2(void* _ UNUSED) {
   pos->x = 400;
   pos->y = 300;
   ballSpeed = 2.0f;
+}
+
+bool veldad(void* _ UNUSED) {
+  return true;
+}
+
+void ballProcess(void* ball) {
+    Position* bPos = position_get(*((Entity*) ball));
+    bPos->x += ballSpeed * ballDirectionX;
+    bPos->y += ballSpeed * ballDirectionY;
 }
 
 int main(void) {
@@ -96,40 +110,32 @@ int main(void) {
   collision_register(bounceWallTag, NULL, lowerWall);
 
   CTagId player1PointTag = collision_addNewTag("player1Point", &scorePointPlayer1, NULL);
-  GPU_Rect rightWall = {600.0f, -10.0f, 5.0f, 620.0f};
-  collision_register(player1PointTag, &ball, rightWall);
+  GPU_Rect rightWall = {800.0f, -10.0f, 5.0f, 620.0f};
+  collision_register(player1PointTag, &ball, box);
   collision_register(player1PointTag, NULL, rightWall);
 
   CTagId player2PointTag = collision_addNewTag("player2Point", &scorePointPlayer2, NULL);
   GPU_Rect leftWall = {-10.0f, 0.0f, 5.0f, 600.0f};
-  collision_register(player2PointTag, &ball, leftWall);
+  collision_register(player2PointTag, &ball, box);
   collision_register(player2PointTag, NULL, leftWall);
 
   behaviour_init();
   behaviour_register(&tru, NULL, &rPaddleWalk, NULL);
+  behaviour_register(&veldad, NULL, &ballProcess, &ball);
 
   bool open = true;
 
   while (open) {
     frameStart();
-    open = handleEvents();
     sprite_draw(entity_getNamed("leftPaddle"));
     sprite_draw(entity_getNamed("rightPaddle"));
     sprite_draw(entity_getNamed("ball"));
-    // game logic
-    // to be abstracted some time
-    Position* bPos = position_get(ball);
-    bPos->x += ballSpeed * ballDirectionX;
-    bPos->y += ballSpeed * ballDirectionY;
-
-    //Position* rPos = position_get(rightPaddle);
-    //rPos->y += bPos->y < rPos->y ? -(ballSpeed * 0.9) : (ballSpeed * 0.9);
     behaviour_process();
-    // -----------------------------------------
     collision_process();
     graphics3D_start();
     graphics3D_end();
     frameEnd();
+    open = handleEvents();
   }
 
   return EXIT_SUCCESS;

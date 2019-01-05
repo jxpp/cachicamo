@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 typedef uint32_t K;
-typedef uint32_t V;
+typedef void* V;
 
 typedef struct _hash_table_entry_t {
   K key;
@@ -21,8 +21,10 @@ typedef struct _hash_table_t {
 } HashTable;
 
 void initHashTable(HashTable*);
+HashTable* hashtable_new(void);
 
 V getHashTable(HashTable*, K);
+
 void setHashTable(HashTable*, K, V);
 
 /*

@@ -17,9 +17,10 @@ void frameStart(void) {
 }
 
 void frameEnd(void) {
-  //XXX: al parecer esto es chungo y no sirve
+  
   if((SDL_GetTicks() - mainGame.time) < TICKS_PER_FRAME) {
-    SDL_Delay(TICKS_PER_FRAME - SDL_GetTicks() + mainGame.time);
+    unsigned blap = TICKS_PER_FRAME - SDL_GetTicks() + mainGame.time;
+    SDL_Delay(blap);
   }
   graphics_frameEnd();
 }

@@ -15,12 +15,14 @@ Entity entity_new(void) {
 }
 
 Entity entity_newNamed(const char* name) {
-  setHashTable(&entity_namedMap, _djb2_hash(name), entityIdCounter);
+  Entity* newEntity = malloc(sizeof(Entity));
+  *newEntity = entityIdCounter;
+  setHashTable(&entity_namedMap, _djb2_hash(name), newEntity);
   return _entity_register(entityIdCounter++);
 }
 
 Entity entity_getNamed(const char* name) {
-  return (Entity) getHashTable(&entity_namedMap, _djb2_hash(name));
+  return *((Entity*) getHashTable(&entity_namedMap, _djb2_hash(name)));
 }
 
 uint64_t _djb2_hash(const char* str) {

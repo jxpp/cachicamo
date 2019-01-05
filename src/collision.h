@@ -14,7 +14,6 @@
 #include "entity.h"
 #include "position_c.h"
 
-
 typedef uint32_t CTagId;
 
 typedef struct _collision_tag_t {
