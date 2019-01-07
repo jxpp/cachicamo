@@ -36,5 +36,7 @@ GPU_Image* graphics_loadImage(const char*);
 
 void graphics_drawToScreen(GPU_Image*, GPU_Rect*, float, float);
 
+void graphics_drawDebugRect(GPU_Rect);
+
 
 #endif
