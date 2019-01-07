@@ -1,57 +1,6 @@
 #include "collision.h"
 
-static bool collision_floatIntersection(GPU_Rect* A, GPU_Rect* B) {
-  float Amin, Amax, Bmin, Bmax;
-  // This is literally just the code for SDL_HasIntersection, only with
-  // GPU_Rects, i.e., floats
-
-  //if (!A) {
-  //  SDL_InvalidParamError("A");
-  //  return SDL_FALSE;
-  //}
-
-  //if (!B) {
-  //  SDL_InvalidParamError("B");
-  //  return SDL_FALSE;
-  //}
-
-  ///* Special cases for empty rects */
-  //if (SDL_RectEmpty(A) || SDL_RectEmpty(B)) {
-  //  return SDL_FALSE;
-  //}
-
-  /* Horizontal intersection */
-  Amin = A->x;
-  Amax = Amin + A->w;
-  Bmin = B->x;
-  Bmax = Bmin + B->w;
-  if (Bmin > Amin)
-    Amin = Bmin;
-  if (Bmax < Amax)
-    Amax = Bmax;
-  if (Amax <= Amin)
-    return false;
-
-  /* Vertical intersection */
-  Amin = A->y;
-  Amax = Amin + A->h;
-  Bmin = B->y;
-  Bmax = Bmin + B->h;
-  if (Bmin > Amin) {
-    Amin = Bmin;
-  }
-  if (Bmax < Amax) {
-    Amax = Bmax;
-  }
-  if (Amax <= Amin) {
-    return false;
-  }
-
-  return true;
-}
-
 void collision_init(void) {
-  puts("initing collision");
   collision_tagMap = malloc(sizeof(CollisionTag*) * MAX_TAGS);
   for (int i = 0; i < MAX_TAGS; i++) {
     collision_tagMap[i] = NULL;
@@ -61,12 +10,10 @@ void collision_init(void) {
   collision_map = malloc(sizeof(CollisionBox*) * MAX_CBOXES);
   collision_nBoxes = 0;
   collision_mapTags = malloc(sizeof(CTagId) * MAX_CBOXES);
-  puts("inited collision");
+  logging_log(INFO, "collision", "Inited collision subsystem");
 }
 
 CTagId collision_addNewTag(const char* name, void(*action)(void*), void* actionArgs) {
-  printf("adding tag %s\n", name);
-  printf("creating tag \n");
   CollisionTag* newCollisionTag = malloc(sizeof(CollisionTag));
   newCollisionTag->id = collision_tagMapCounter;
   newCollisionTag->name = malloc(sizeof(char*) * strlen(name));
@@ -76,7 +23,6 @@ CTagId collision_addNewTag(const char* name, void(*action)(void*), void* actionA
 
   collision_tagMap[collision_tagMapCounter] = newCollisionTag;
 
-  printf("added tag %s\n", name);
   return collision_tagMapCounter++;
 }
 
@@ -96,6 +42,18 @@ static GPU_Rect collision_calculateOffset(GPU_Rect box, Entity* entity) {
   return ret;
 }
 
+void collision_showBoxes(void) {
+  GPU_Rect box;
+
+  for (unsigned int i = 0; i < collision_nBoxes; i++) {
+    box = collision_map[i]->box;
+    if(collision_map[i]->entity != NULL) {
+      box = collision_calculateOffset(box, collision_map[i]->entity);
+    }
+    graphics_drawDebugRect(box);
+  }
+}
+
 void collision_process(void) {
   for (unsigned int i = 0; i < collision_nBoxes; i++) {
     for (unsigned int j = i + 1; j < collision_nBoxes; j++) {
@@ -111,7 +69,7 @@ void collision_process(void) {
         } else {
           b = collision_map[j]->box;
         }
-        if (collision_floatIntersection(&a, &b)) {
+        if (GPU_IntersectRect(a, b, NULL)) {
           collision_tagMap[collision_mapTags[i]]->action((void*) collision_map[i]);
         }
       }

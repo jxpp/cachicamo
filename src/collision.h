@@ -11,6 +11,8 @@
 #include <SDL.h>
 #include <SDL_gpu.h>
 
+#include "logging.h"
+#include "graphics.h"
 #include "entity.h"
 #include "position_c.h"
 
@@ -40,6 +42,8 @@ CTagId* collision_mapTags;
 void collision_init(void);
 
 CTagId collision_addNewTag(const char*, void(*)(void*), void*);
+
+void collision_showBoxes(void);
 
 void collision_register(CTagId, Entity*, GPU_Rect);
 
