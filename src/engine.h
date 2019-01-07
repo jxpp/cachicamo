@@ -18,11 +18,6 @@
 #include "sprite.h"
 #include "position_c.h"
 
-/*
- * TODO:
- * - Funciones de mover usando callbacks
- * - queue de gameobjects
- */
 
 void init(void);
 void frameStart(void);
