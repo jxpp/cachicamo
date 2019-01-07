@@ -30,12 +30,17 @@ void moveDown(void* entity) {
 }
 
 void bounceBallPaddle(void* _ UNUSED ) {
-  ballDirectionX *= -1;
-  ballSpeed *= 1.05f;
+  float randy = (float) ((rand() % 50) * 0.01f);
+  ballDirectionX *= -(ballDirectionX + randy);
+  ballDirectionY *= randy;
+  ballSpeed *= 1.025f;
 }
 
 void bounceBallWall(void* _ UNUSED) {
-  ballDirectionY *= -1;
+  float randy = (float) ((rand() % 50) * 0.01f);
+  ballDirectionX *= randy;
+  ballDirectionY *= -(ballDirectionY + randy);
+  ballSpeed *= 1.025f;
 }
 
 bool tru(void* _ UNUSED) {
@@ -47,9 +52,10 @@ bool tru(void* _ UNUSED) {
 }
 
 void rPaddleWalk(void* args UNUSED) {
-  Entity rPaddle = entity_getNamed("rightPaddle");
-  Entity ball = entity_getNamed("ball");
-  position_get(rPaddle)->y += position_get(ball)->y < position_get(rPaddle)->y ? -2.5f : 2.5f;
+  float* rPaddleY_ptr = &position_get(entity_getNamed("rightPaddle"))->y;
+  float ballY = position_get(entity_getNamed("ball"))->y;
+  float dist = fabs(*rPaddleY_ptr - ballY);
+  *rPaddleY_ptr += ballY < *rPaddleY_ptr ? -fmin(2.5f, dist) : fmin(2.5f, dist);
 }
 
 void scorePointPlayer1(void* _ UNUSED ) {
@@ -57,6 +63,8 @@ void scorePointPlayer1(void* _ UNUSED ) {
   pos->x = 400;
   pos->y = 300;
   ballSpeed = 2.0f;
+  ballDirectionX *= -1;
+  ballDirectionY *= -1;
 }
 
 void scorePointPlayer2(void* _ UNUSED) {
@@ -64,6 +72,8 @@ void scorePointPlayer2(void* _ UNUSED) {
   pos->x = 400;
   pos->y = 300;
   ballSpeed = 2.0f;
+  ballDirectionX = 1;
+  ballDirectionY = 1;
 }
 
 bool veldad(void* _ UNUSED) {
@@ -82,13 +92,13 @@ int main(void) {
   sprite_loadImage("ball.png");
 
   Entity leftPaddle = entity_newNamed("leftPaddle");
-  position_register(leftPaddle, 10.0, 10.0);
+  position_register(leftPaddle, 40, 40);
   sprite_register(leftPaddle, "ball.png", 0, 0, 10, 50);
   input_register(SDL_SCANCODE_W, &moveUp, &leftPaddle);
   input_register(SDL_SCANCODE_S, &moveDown, &leftPaddle);
 
   Entity rightPaddle = entity_newNamed("rightPaddle");
-  position_register(rightPaddle, 800-10.0, 600-10.0);
+  position_register(rightPaddle, 800-40.0, 600-40.0);
   sprite_register(rightPaddle, "ball.png", 40, 40, 10, 50);
 
   Entity ball = entity_newNamed("ball");
@@ -99,11 +109,11 @@ int main(void) {
   GPU_Rect paddleBox = {-5.0f, -25.0f, 10.0f, 50.0f};
   collision_register(bounceTag, &leftPaddle, paddleBox);
   collision_register(bounceTag, &rightPaddle, paddleBox);
-  GPU_Rect box = {-8.0f, -8.0f, 16.0f, 16.0f};
+  GPU_Rect box = {-8, -8, 16, 16};
   collision_register(bounceTag, &ball, box);
 
   CTagId bounceWallTag = collision_addNewTag("wall", &bounceBallWall, NULL);
-  GPU_Rect upperWall = {0.0f, -10.0f, 800.0f, 15.0f};
+  GPU_Rect upperWall = {0.0f, -10.0f, 800.0f, 10.0f};
   GPU_Rect lowerWall = {0.0f, 600.0f, 800.0f, 15.0f};
   collision_register(bounceWallTag, &ball, box);
   collision_register(bounceWallTag, NULL, upperWall);
@@ -127,15 +137,14 @@ int main(void) {
 
   while (open) {
     frameStart();
+    open = handleEvents();
+    collision_process();
+    behaviour_process();
     sprite_draw(entity_getNamed("leftPaddle"));
     sprite_draw(entity_getNamed("rightPaddle"));
     sprite_draw(entity_getNamed("ball"));
-    behaviour_process();
-    collision_process();
-    graphics3D_start();
-    graphics3D_end();
+    collision_showBoxes();
     frameEnd();
-    open = handleEvents();
   }
 
   return EXIT_SUCCESS;
