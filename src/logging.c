@@ -1,16 +1,18 @@
 #include "logging.h"
 
-void init_logging(void) {
+enum logging_level logging_logLevel = WARNING;
 
+void init_logging(void) {
 }
 
-void logging_log(enum LOGGING_LEVEL log_level, const char* module, const char* str) {
-  static const char DEBUG_LOG_STYLE[] = "\033[34m[DEBUG][%s]: %s\033[0m\n";
-  static const char WARNING_LOG_STYLE[] = "\033[32m[WARNING][%s]: %s\033[0m\n";
-
+void logging_log(enum logging_level log_level, const char* module, const char* str) {
+  if (log_level < logging_logLevel) {
+    return;
+  }
   switch(log_level) {
-    case DEBUG: printf(DEBUG_LOG_STYLE, module, str); break;
-    case WARNING: printf(WARNING_LOG_STYLE, module, str); break;
-    default: break;
+    case DEBUG: fprintf(stdout, DEBUG_LOG_STYLE, module, str); break;
+    case INFO: fprintf(stdout, INFO_LOG_STYLE, module, str); break;
+    case WARNING: fprintf(stdout, WARNING_LOG_STYLE, module, str); break;
+    case CRITICAL: fprintf(stdout, WARNING_LOG_STYLE, module, str); break;
   }
 }
