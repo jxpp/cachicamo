@@ -22,7 +22,7 @@ SRC:=$(shell find $(SRC_DIR) -type f -name *.$(SRC_EXT))
 OBJS:=$(patsubst $(SRC_DIR)%, $(OBJ_DIR)%, $(SRC:.$(SRC_EXT)=.o))
 
 CFLAGS:=$(shell sdl2-config --cflags) -pipe -Wall -Wextra -pedantic -std=c11 -g -Og -I/usr/include/GL
-LFLAGS:=$(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gpu -lpthread -lGLEW
+LFLAGS:=$(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gpu -lpthread -lGLEW -lGL -lm
 
 TARGETNAME=main
 TARGET:=$(BIN_DIR)$(TARGETNAME)
