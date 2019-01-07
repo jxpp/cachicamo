@@ -9,20 +9,15 @@
 #define FRAMES_PER_SECOND 60
 #define TICKS_PER_FRAME TICKS_PER_SECOND/FRAMES_PER_SECOND
 
-#define TITLE "dicks"
+#define TITLE "Cachicamo"
 
 #include <stdint.h>
 
-#include <SDL.h>
-#include <SDL_image.h>
-
 struct _game_t {
-    SDL_Window* window;
-    SDL_Surface* screenSurface;
-    SDL_Renderer* renderer;
     uint32_t time;
 };
 
 extern struct _game_t mainGame;
+
 
 #endif
