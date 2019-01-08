@@ -85,6 +85,26 @@ void sprite_deregister(Entity entity) {
   _sprite_free(sprite);
 }
 
+void sprite_process(void) {
+  Sprite* sprite;
+  Position* pos;
+
+  for (Entity entity = 0; entity < MAX_ENTITIES; entity++) {
+    if (sprite_map[entity] != NULL) {
+      sprite = sprite_map[entity];
+      pos = position_get(entity);
+
+      graphics_drawQueueAppendImage(
+        0,
+        sprite->image,
+        sprite->rect,
+        pos->x,
+        pos->y
+      );
+    }
+  }
+}
+
 void sprite_draw(Entity entity) {
   Sprite* sprite = sprite_map[entity];
   Position* pos = position_get(entity);

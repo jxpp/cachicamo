@@ -3,16 +3,15 @@
 #include <stdbool.h>
 
 #include "engine.h"
-#include "entity.h"
-#include "logging.h"
-#include "collision.h"
-#include "position_c.h"
-
-#include "behaviour.h"
+//#include "entity.h"
+//#include "logging.h"
+//#include "collision.h"
+//#include "position_c.h"
+//#include "behaviour.h"
 
 #define UNUSED __attribute__((unused))
 
-float ballSpeed = 2.0f;
+float ballSpeed = 3.0f;
 
 float ballDirectionX = 1.0f;
 float ballDirectionY = 1.0f;
@@ -30,16 +29,12 @@ void moveDown(void* entity) {
 }
 
 void bounceBallPaddle(void* _ UNUSED ) {
-  float randy = (float) ((rand() % 50) * 0.01f);
-  ballDirectionX *= -(ballDirectionX + randy);
-  ballDirectionY *= randy;
+  ballDirectionX *= -1;
   ballSpeed *= 1.025f;
 }
 
 void bounceBallWall(void* _ UNUSED) {
-  float randy = (float) ((rand() % 50) * 0.01f);
-  ballDirectionX *= randy;
-  ballDirectionY *= -(ballDirectionY + randy);
+  ballDirectionY *= -1;
   ballSpeed *= 1.025f;
 }
 
@@ -82,6 +77,7 @@ bool veldad(void* _ UNUSED) {
 
 void ballProcess(void* ball) {
     Position* bPos = position_get(*((Entity*) ball));
+    printf("%f %f\n", bPos->x, bPos->y);
     bPos->x += ballSpeed * ballDirectionX;
     bPos->y += ballSpeed * ballDirectionY;
 }
@@ -113,7 +109,7 @@ int main(void) {
   collision_register(bounceTag, &ball, box);
 
   CTagId bounceWallTag = collision_addNewTag("wall", &bounceBallWall, NULL);
-  GPU_Rect upperWall = {0.0f, -10.0f, 800.0f, 10.0f};
+  GPU_Rect upperWall = {0.0f, -20.0f, 800.0f, 20.0f};
   GPU_Rect lowerWall = {0.0f, 600.0f, 800.0f, 15.0f};
   collision_register(bounceWallTag, &ball, box);
   collision_register(bounceWallTag, NULL, upperWall);
@@ -138,12 +134,7 @@ int main(void) {
   while (open) {
     frameStart();
     open = handleEvents();
-    collision_process();
-    behaviour_process();
-    sprite_draw(entity_getNamed("leftPaddle"));
-    sprite_draw(entity_getNamed("rightPaddle"));
-    sprite_draw(entity_getNamed("ball"));
-    collision_showBoxes();
+    cachicamo_processFrame();
     frameEnd();
   }
 

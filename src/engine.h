@@ -10,13 +10,15 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "collision.h"
 #include "globals.h"
-#include "input.h"
+
+#include "behaviour.h"
+#include "collision.h"
 #include "graphics.h"
+#include "input.h"
 #include "logging.h"
-#include "sprite.h"
 #include "position_c.h"
+#include "sprite.h"
 
 
 void init(void);
@@ -25,5 +27,6 @@ void frameEnd(void);
 
 int handleEvents(void);
 
+void cachicamo_processFrame();
 
 #endif

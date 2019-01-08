@@ -42,6 +42,7 @@ void spriteAnimated_register(Entity, const char*, GPU_Rect*);
 
 void sprite_draw(Entity);
 
+void sprite_process(void);
 void sprite_update(Sprite*);
 
 #endif

@@ -11,13 +11,14 @@
 
 #define TITLE "Cachicamo"
 
-#include <stdint.h>
+#include <stdlib.h>
+
 
 struct _game_t {
-    uint32_t time;
+    size_t time;
+    size_t deltaTime;
 };
 
 extern struct _game_t mainGame;
-
 
 #endif

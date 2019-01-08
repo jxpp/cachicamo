@@ -17,7 +17,7 @@ void frameStart(void) {
 }
 
 void frameEnd(void) {
-  
+
   if((SDL_GetTicks() - mainGame.time) < TICKS_PER_FRAME) {
     unsigned blap = TICKS_PER_FRAME - SDL_GetTicks() + mainGame.time;
     SDL_Delay(blap);
@@ -39,4 +39,12 @@ int handleEvents(void) {
   input_process();
 
   return 1;
+}
+
+void cachicamo_processFrame(void) {
+  collision_process();
+  behaviour_process();
+  sprite_process();
+  graphics_frameDraw();
+  collision_showBoxes();
 }
