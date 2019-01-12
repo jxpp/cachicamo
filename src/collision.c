@@ -55,6 +55,7 @@ void collision_showBoxes(void) {
 }
 
 void collision_process(void) {
+  int idx = 0;
   for (unsigned int i = 0; i < collision_nBoxes; i++) {
     for (unsigned int j = i + 1; j < collision_nBoxes; j++) {
       if (collision_mapTags[i] == collision_mapTags[j]) {
@@ -70,7 +71,8 @@ void collision_process(void) {
           b = collision_map[j]->box;
         }
         if (GPU_IntersectRect(a, b, NULL)) {
-          collision_tagMap[collision_mapTags[i]]->action((void*) collision_map[i]);
+          idx = collision_mapTags[i];
+          collision_tagMap[idx]->action((void*) collision_tagMap[idx]->actionArgs);
         }
       }
     }
