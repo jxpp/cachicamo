@@ -1,6 +1,5 @@
-#pragma once
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef CACHICAMO_H
+#define CACHICAMO_H
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -28,5 +27,6 @@ void frameEnd(void);
 int handleEvents(void);
 
 void cachicamo_processFrame();
+
 
 #endif
